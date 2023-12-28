@@ -1,0 +1,30 @@
+.errmsg {
+    background-color: #FFAAAA;
+}
+
+.body{
+    background-color: #222222;
+}
+#top-section{
+    width: 100%;
+    background-color: #FFFFFF;
+}
+#topic-section{
+    width: 20%;
+    float: left;
+    background-color: #E0E0FF;
+}
+#chat-section{
+    width: 80%;
+    float: left;
+    background-color: #FFE0E0;
+}
+#chat-messages{
+    width: 100%;
+    background-color: #E0FFE0;
+}
+#chatbox-section{
+    width: 100%;
+    float: left;
+    background-color: #FFE0FF;
+}
