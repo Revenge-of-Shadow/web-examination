@@ -24,9 +24,7 @@
         $salt = dechex($random_val);
         $hash = hash(
             "sha256",
-            $salt.$password,
-            false,
-            []
+            $salt.$password
         );
 
         $hash = $salt."$".$hash;

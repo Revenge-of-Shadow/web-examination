@@ -24,22 +24,24 @@ else{
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if(!$row=mysqli_fetch_assoc($result)){
+    if(!$row=mysqli_fetch_row($result)){
         $extra = 'sign-in.php'
             .'?failed=1';
     }else{
         $hash = $row[0];
-        $hashed_original = explode('$', $hash)[1];
+        $fingerprint = explode('$', $hash);
+        $salt = $fingerprint[0];
+        $hashed_original = $fingerprint[1];
         $hashed_password = hash(
             "sha256",
-            $password,
-            false,
-            []
+            $salt.$password
         );
+
         if(strcmp($hashed_password, $hashed_original)){
             //  If they are not identical. 1 / -1.
             $extra = 'sign-in.php'
-                .'?failed=1';
+                .'?failed=1'
+                .'&original='.$hashed_original.'&current='.$hashed_password;
         }
         else{
             $extra = 'connect.php';
