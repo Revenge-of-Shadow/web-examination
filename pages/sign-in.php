@@ -22,7 +22,7 @@ $mfieldkeys = array_flip($mfieldlist);
     <?php
     if(array_key_exists('login', $mfieldkeys)){
         ?>
-        <label class="errmsg">'Login' field needs to be filled in</label>
+        <label class="errmsg">'Login' field needs to be filled in.</label>
         <br/>
         <?php
     }?>
@@ -32,7 +32,7 @@ $mfieldkeys = array_flip($mfieldlist);
     <?php
     if(array_key_exists('password', $mfieldkeys)){
         ?>
-        <label class="errmsg">'Password' field needs to be filled in</label>
+        <label class="errmsg">'Password' field needs to be filled in.</label>
         <br/>
         <?php
     }?>

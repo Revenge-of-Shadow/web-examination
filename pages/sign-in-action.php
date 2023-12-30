@@ -15,7 +15,7 @@ if (!empty($faulty_fields)) {
 else{
     extract($_POST);
 
-    require_once("database.php");
+    require_once("session.php");
     $mysqli = mysqli_connect(hostname, user, password, database);
 
 
@@ -45,7 +45,20 @@ else{
         }
         else{
             $extra = 'connect.php';
-            //  Are we to append the is_logged_in to the URL or something?
+            //  Success.
+
+            $session_secret = time().rand(4096, 65535);
+            $session_hash = hash(
+                "sha256",
+                $session_secret.$literal_abracadabra.$login
+            );
+            $expiration_time = 0;
+            setcookie("login", $login, $expiration_time);
+            setcookie("session_hash", $session_hash, $expiration_time);
+
+            $stmt = $mysqli->prepare("UPDATE user SET session_secret = ? WHERE login=?");
+            $stmt->bind_param("ss",  $session_secret, $login);
+            $stmt->execute();
         }
 
         $stmt->close();

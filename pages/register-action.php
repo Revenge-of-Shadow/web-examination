@@ -29,7 +29,7 @@
 
         $hash = $salt."$".$hash;
 
-        require_once("database.php");
+        require_once("session.php");
         $mysqli = mysqli_connect(hostname, user, password, database);
 
 
