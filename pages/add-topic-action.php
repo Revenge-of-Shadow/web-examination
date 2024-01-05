@@ -1,60 +1,57 @@
 <?php
-require_once("session.php");
+// incoming fields ($_POST):
+// title
+// message_text
+
+// incoming session variables:
+// user_id := login_id
+
+// defaults:
+// removed := FALSE
+// sent_time := NOW()
+
+// outcomes:
+// success -> navigate to new topic page
+// failure -> navigate to the topic list
+
+require_once("../connect/session.php");
 
 $host = $_SERVER['HTTP_HOST'];
-$uri = $_SERVER['PHP_SELF'];
-$extra="";
+$uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+$extra = "index.php";
 
 $faulty_fields = array();
-if (!$_POST["topic_title"]) {
-    $faulty_fields[] = 'topic_title';
+if(!($title = @$_POST['title'])) {
+    $faulty_fields[] = 'title';
 }
-if (!$_POST["topic_text"]) {
-    $faulty_fields[] = 'topic_text';
+if(!($message_text = @$_POST['message_text'])) {
+    $faulty_fields[] = 'message_text';
 }
-if (!empty($faulty_fields)) {
-    $extra = '?missing='.join('+', $faulty_fields);
+if($faulty_fields) {
+    $extra = 'index.php'.'?missing='.join('+', $faulty_fields);
 }
-else {
-    extract($_POST);
-
-    $mysqli = mysqli_connect(hostname, user, password, database);
-
-    $stmt = $mysqli->prepare("SELECT id FROM user WHERE login=?");
-    $stmt->bind_param("s", $_COOKIE["login"]);
+else if(@$login_id) {
+    $stmt = $mysqli->prepare(
+        "INSERT INTO message(user_id, title, message_text, removed, sent_time) VALUES (?, ?, ?, FALSE, NOW())");
+    $stmt->bind_param("iss", $login_id, $title, $message_text);
     $stmt->execute();
-    $result = $stmt->get_result();
 
-    if($row=mysqli_fetch_row($result)) {
-        $timestamp = date_timestamp_get();
-        $stmt = $mysqli->prepare("INSERT INTO message" .
-            "(message_text, title, user_id, removed, sent_time) "
-            . "VALUES (?, ?, ?, FALSE, ?);");
-        $stmt->bind_param("ssss", $topic_text, $topic_title, $row[0], $timestamp);
-        $stmt->execute();
-
-        //  This can not fail, right?
-
-        $stmt = $mysqli->prepare("SELECT id FROM message WHERE sent_time=? AND title=?");
-        $stmt->bind_param("ss", $timestamp, $topic_title);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if($row=mysqli_fetch_row($result)){
-            $stmt = $mysqli->prepare("UPDATE message SET topic_id=?, parent_id=? WHERE id=?;");
-            $stmt->bind_param("ddd", $row[0], $row[0], $row[0]);
-            $stmt->execute();
-
-            //  We good?
-        }else{
-            //  Topic sending has fail'd. Too bad.
-        }
+    if(!$mysqli->errno){
+        // catch up topic_id
+        $topic_id = $mysqli->insert_id;
+        // The following statement _usually_ modifies a single row, but since it's not dependent on the topic_id,
+        // it doesn't matter if it occasionally adjusts someone else's added topic (or if the topic just added is
+        // adjusted by someone else). What matters is that when we redirect, the topic just added will already be
+        // adjusted.
+        $mysqli->query("UPDATE message SET topic_id=id WHERE ISNULL(topic_id)");
     }
-    else{
-        //  Login not found. I am concentrated on other parts now.
+    if(!$mysqli->errno){
+        $extra = "index.php?topic_id=$topic_id";
+    } else {
+        $extra = "index.php?errno=" . $mysqli->errno;
     }
-
-    $stmt->close();
-    $mysqli->close();
 }
-header("Location: http://$host$uri$extra");
+
+header("Location: http://$host$uri/$extra");
+
+?>

@@ -3,21 +3,19 @@ $host = $_SERVER['HTTP_HOST'];
 $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
 $faulty_fields = array();
-if (!$_POST["login"]) {
+if (!@$_POST["login"]) {
     $faulty_fields[] = 'login';
 }
-if (!$_POST["password"]) {
+if (!@$_POST["password"]) {
     $faulty_fields[] = 'password';
 }
 if (!empty($faulty_fields)) {
     $extra = 'sign-in.php'.'?missing='.join('+', $faulty_fields);
 }
 else{
+    require_once("../connect/session.php");
+    $original_login = $login;
     extract($_POST);
-
-    require_once("session.php");
-    $mysqli = mysqli_connect(hostname, user, password, database);
-
 
     $stmt = $mysqli->prepare("SELECT hash FROM user WHERE login=? AND disabled=FALSE");
     $stmt->bind_param("s", $login);
@@ -41,24 +39,29 @@ else{
             //  If they are not identical. 1 / -1.
             $extra = 'sign-in.php'
                 .'?failed=1'
-                .'&original='.$hashed_original.'&current='.$hashed_password;
+                ;
         }
         else{
-            $extra = 'connect.php';
-            //  Success.
-
             $session_secret = time().rand(4096, 65535);
             $session_hash = hash(
                 "sha256",
                 $session_secret.$literal_abracadabra.$login
             );
-            $expiration_time = 0;
+
+            $stmt = $mysqli->prepare("UPDATE user SET session_secret = ? WHERE login=?");
+            if($original_login != $login) {
+                $backtrack = "alias:$login";
+                $stmt->bind_param("ss", $backtrack, $original_login);
+                $stmt->execute();            
+            }
+            $stmt->bind_param("ss",  $session_secret, $login);
+            $stmt->execute();
+
+            $expiration_time = 0; // to persist: time() + (something reasonable, e.g. 86400 aka 1 day);
             setcookie("login", $login, $expiration_time);
             setcookie("session_hash", $session_hash, $expiration_time);
 
-            $stmt = $mysqli->prepare("UPDATE user SET session_secret = ? WHERE login=?");
-            $stmt->bind_param("ss",  $session_secret, $login);
-            $stmt->execute();
+            $extra = 'index.php';
         }
 
         $stmt->close();
@@ -66,3 +69,4 @@ else{
     }
 }
 header("Location: http://$host$uri/$extra");
+?>

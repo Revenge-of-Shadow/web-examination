@@ -1,7 +1,6 @@
 .errmsg {
     background-color: #FFAAAA;
 }
-
 .body{
     background-color: #222222;
 }
@@ -27,4 +26,49 @@
     width: 100%;
     float: left;
     background-color: #FFE0FF;
+}
+
+.fullscreen{
+    width: 100%;
+    height: 100%;
+}
+.cell-center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.topic_title {
+    font-size: larger;
+    font-weight: bold;
+}
+.topic_lines {
+    font-weight: bold;
+}
+.reply_title {
+    font-size: large;
+}
+.reply_lines {
+    font-weight: normal;
+}
+.username {
+    font-style: normal;
+}
+.deadname {
+    text-decoration: line-through;
+}
+.title_input {
+    width: 50em;
+}
+.lines_input {
+    width: 50em;
+    height: 8em;
+}
+.larger_btn {
+    width: 33em;
+}
+.smaller_btn {
+    width: 17em;
 }

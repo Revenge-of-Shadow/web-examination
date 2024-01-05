@@ -3,21 +3,21 @@
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
     $faulty_fields = array();
-    if (!$_POST["login"]) {
+    if (!@$_POST["login"]) {
         $faulty_fields[] = 'login';
     }
-    if (!$_POST["nickname"]) {
+    if (!@$_POST["nickname"]) {
         $faulty_fields[] = 'nickname';
     }
-    if (!$_POST["password"]) {
+    if (!@$_POST["password"]) {
         $faulty_fields[] = 'password';
     }
 
     if (!empty($faulty_fields)) {
         $extra = 'register.php'.'?missing='.join('+', $faulty_fields);
-    }
-
-    else{
+    } else if($_POST['password'] != @$_POST['passcopy']) {
+        $extra = 'register.php?passmatch=1';
+    } else{
         extract($_POST);
 
         $random_val = rand(4096, 65535);
@@ -29,8 +29,7 @@
 
         $hash = $salt."$".$hash;
 
-        require_once("session.php");
-        $mysqli = mysqli_connect(hostname, user, password, database);
+        require_once("../connect/session.php");
 
 
         $stmt = $mysqli->prepare("INSERT INTO user (login, nickname, hash, admin, disabled) VALUES (?, ?, ?, FALSE, FALSE)");
@@ -38,13 +37,14 @@
         $stmt->execute();
 
 
-        if($mysqli->errno != 0){
+        if($mysqli->errno){
+            $errno = $mysqli->errno;
             $count_stmt = $mysqli->prepare("SELECT COUNT(*) FROM user WHERE login=?;");
             $count_stmt->bind_param("s", $login);
             $count_stmt->execute();
 
             $extra = 'register.php'
-                .'?errno='.$mysqli->errno
+                .'?errno='.$errno
                 .'&collision='.mysqli_fetch_row($count_stmt->get_result())[0];
         }
         else{
@@ -56,3 +56,4 @@
         $mysqli->close();
     }
     header("Location: http://$host$uri/$extra");
+?>
