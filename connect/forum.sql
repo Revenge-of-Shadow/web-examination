@@ -20,8 +20,10 @@ CREATE TABLE message(
     topic_id INT NULL,
     removed BOOL,
     sent_time DATETIME,
-    edit_time TIMESTAMP,
+    edit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (parent_id) REFERENCES message(id),
     FOREIGN KEY (topic_id) REFERENCES message(id)
 );
+
+SET SQL_SAFE_UPDATES = 0;

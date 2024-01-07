@@ -55,8 +55,8 @@ if(@$parent_id) {
         <textarea name="message_text" class="lines_input"><?=htmlentities($message_text)?></textarea>
     </td></tr>
     <tr><td/><td>
-        <button type="reset" class="smaller_btn">Silentium!</button>
-        <button type="submit" class="larger_btn">Urbi et orbi!</button>
+        <button type="reset" class="smaller_btn">Cancel.</button>
+        <button type="submit" class="larger_btn">Send.</button>
     </td></tr>
 </table>
 </form>

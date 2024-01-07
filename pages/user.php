@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Main admin page</title>
+	<title>User profile page</title>
         <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>

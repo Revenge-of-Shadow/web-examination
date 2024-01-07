@@ -13,4 +13,5 @@ function db_connect() {
 }
 
 $mysqli = db_connect();
+$mysqli->query("SET SQL_SAFE_UPDATES = 0");
 ?>

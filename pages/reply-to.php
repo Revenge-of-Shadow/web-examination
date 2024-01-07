@@ -56,7 +56,7 @@ if(@$parent_id && $parent_id != $topic_id) {
 }
 if($may_edit) {
     if($topic_id == $edit_id) {
-        echo "<h4>ATTENTION: DELETING ENTIRE TOPIC!</h4>";
+        if($del_msg) echo "<h4>ATTENTION: DELETING ENTIRE TOPIC!</h4>";
     } else {
         echo "<h4>Original text:</h4>";
         display_message_by_id($edit_id);
