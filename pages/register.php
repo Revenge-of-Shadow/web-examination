@@ -1,6 +1,5 @@
 <?php
 $collision = @$_GET['collision'];
-$passmatch = @$_GET['passmatch'];
 $missing = @$_GET['missing'];
 $mfieldlist = explode(" ", $missing);
 $mfieldkeys = array_flip($mfieldlist);
@@ -15,7 +14,7 @@ $mfieldkeys = array_flip($mfieldlist);
     <body style="text-align:center">
         <form action="register-action.php" method="post">
             <?php
-            if(array_key_exists('login', $mfieldkeys)){
+            if(array_key_exists('new_login', $mfieldkeys)){
                 ?>
                 <label class="errmsg">'Login' field needs to be filled in</label>
                 <br/>
@@ -27,8 +26,8 @@ $mfieldkeys = array_flip($mfieldlist);
                 <br/>
                 <?php
             }?>
-            <label for="login">Your login:</label>
-            <input name="login" id="login" type="text">
+            <label for="new_login">Your login:</label>
+            <input name="new_login" id="login" type="text">
             <br/>
             <?php
             if(array_key_exists('nickname', $mfieldkeys)){
@@ -38,27 +37,11 @@ $mfieldkeys = array_flip($mfieldlist);
                 <?php
             }?>
             <label for="nickname">Your nickname:</label>
-            <input name="nickname" id="nickname" type="text">
+            <input name="nickname" autocomplete="username" id="nickname" type="text">
             <br/>
             <?php
-            if(array_key_exists('password', $mfieldkeys)){
-                ?>
-                <label class="errmsg">'Password' field needs to be filled in</label>
-                <br/>
-                <?php
-            }
-            if($passmatch){
-                ?>
-                <label class="errmsg">Passwords must match</label>
-                <br/>
-                <?php
-            }?>
-            <label for="password">Your password:</label>
-            <input name="password" id="password" type="password">
-            <br/>
-            <label for="password">Retype password:</label>
-            <input name="passcopy" id="password" type="password">
-            <br/>
+            require("../fragments/password-entry.php");
+            ?>
             <button type="submit">Register.</button>
         </form>
     </body>

@@ -3,8 +3,8 @@
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
     $faulty_fields = array();
-    if (!@$_POST["login"]) {
-        $faulty_fields[] = 'login';
+    if (!@$_POST["new_login"]) {
+        $faulty_fields[] = 'new_login';
     }
     if (!@$_POST["nickname"]) {
         $faulty_fields[] = 'nickname';
@@ -19,28 +19,22 @@
         $extra = 'register.php?passmatch=1';
     } else{
         extract($_POST);
-
-        $random_val = rand(4096, 65535);
-        $salt = dechex($random_val);
-        $hash = hash(
-            "sha256",
-            $salt.$password
-        );
-
-        $hash = $salt."$".$hash;
-
         require_once("../connect/session.php");
+        $hash = salted_password_hash($password);
 
+        $ucres = $mysqli->query("SELECT COUNT(id) FROM user");
+        $user_count = $ucres->fetch_row()[0];
+        $make_admin = !$user_count; // first user becomes admin
 
-        $stmt = $mysqli->prepare("INSERT INTO user (login, nickname, hash, admin, disabled) VALUES (?, ?, ?, FALSE, FALSE)");
-        $stmt->bind_param("sss", $login, $nickname, $hash);
+        $stmt = $mysqli->prepare("INSERT INTO user (login, nickname, hash, admin, disabled) VALUES (?, ?, ?, ?, FALSE)");
+        $stmt->bind_param("sssi", $new_login, $nickname, $hash, $make_admin);
         $stmt->execute();
 
 
         if($mysqli->errno){
             $errno = $mysqli->errno;
             $count_stmt = $mysqli->prepare("SELECT COUNT(*) FROM user WHERE login=?;");
-            $count_stmt->bind_param("s", $login);
+            $count_stmt->bind_param("s", $new_login);
             $count_stmt->execute();
 
             $extra = 'register.php'

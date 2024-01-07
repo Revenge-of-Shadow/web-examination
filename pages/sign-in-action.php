@@ -14,7 +14,7 @@ if (!empty($faulty_fields)) {
 }
 else{
     require_once("../connect/session.php");
-    $original_login = $login;
+    $original_login = @$login;
     extract($_POST);
 
     $stmt = $mysqli->prepare("SELECT hash FROM user WHERE login=? AND disabled=FALSE");

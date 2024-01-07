@@ -1,0 +1,13 @@
++ display parent link
++ edit a specific message (form)
++ edit a specific message (action)
++ display modified time
++ reply to a specific message
++ delete a message (form)
++ delete a message | mark as deleted
++ page with COUNT(id)
+
++ display user page (stats, password change)
++ display user list (admin only)
++ administrative actions on users (promote/demote/delete)
++ installation

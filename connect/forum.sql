@@ -1,3 +1,4 @@
+CREATE DATABASE forum;
 USE forum;
 
 CREATE TABLE user(

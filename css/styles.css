@@ -59,6 +59,9 @@
 .deadname {
     text-decoration: line-through;
 }
+.msg_actions {
+    float: right;
+}
 .title_input {
     width: 50em;
 }
@@ -71,4 +74,9 @@
 }
 .smaller_btn {
     width: 17em;
+}
+
+.pagenos {
+    font-size: small;
+    text-align: center;
 }

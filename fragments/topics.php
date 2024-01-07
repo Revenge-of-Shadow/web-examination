@@ -4,7 +4,7 @@ if(@$_GET['errno']) {
 }
 
 if($result = $mysqli->query(
-    "SELECT message.*, user.nickname FROM message INNER JOIN user ON user.id=user_id WHERE message.id=topic_id")) {
+    "SELECT message.*, user.nickname FROM message INNER JOIN user ON user.id=user_id WHERE message.id=topic_id ORDER BY topic_id DESC")) {
 ?><dl><?php
 while($row = $result->fetch_assoc()) {
     extract($row, EXTR_OVERWRITE | EXTR_PREFIX_ALL, "m");
